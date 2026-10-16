@@ -1158,5 +1158,98 @@ Q.oninput=e=>{const v=e.target.value;if(!v&&was){was=false;find("");go(0);return
 </script>
 
 
+
+<style id="mobile-table-reflow-v27">
+/* Mobile: turn each table row into a readable vertical record; never add/reorder data columns. */
+@media (max-width: 680px) {
+  .content table, main table, article table, section table, table {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: auto !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    overflow: visible !important;
+    white-space: normal !important;
+  }
+  table thead { display: none !important; }
+  table tbody, table tfoot { display: block !important; width: 100% !important; }
+  table tr {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 0 10px !important;
+    padding: 7px 9px !important;
+    border: 1px solid var(--border, #cbd5e1) !important;
+    border-radius: 7px !important;
+    background: var(--surface, rgba(127,127,127,.04)) !important;
+    overflow: hidden !important;
+  }
+  table th, table td {
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 5px 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--border, rgba(127,127,127,.2)) !important;
+    text-align: left !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    hyphens: auto;
+    line-height: 1.45 !important;
+    font-size: 13px !important;
+  }
+  table tr > :last-child { border-bottom: 0 !important; }
+  table td[data-mobile-label]::before, table th[data-mobile-label]::before {
+    content: attr(data-mobile-label);
+    display: block;
+    margin: 0 0 2px;
+    color: var(--muted, #64748b);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: .015em;
+  }
+  /* Keep truly empty spacer rows out of the mobile flow. */
+  table tr:empty { display: none !important; }
+}
+</style>
+<script id="mobile-table-labels-v27">
+(()=>{
+  function prepareMobileTables(){
+    if(!window.matchMedia('(max-width: 680px)').matches) return;
+    document.querySelectorAll('table').forEach(table=>{
+      if(table.dataset.mobileReflowV27==='1') return;
+      table.dataset.mobileReflowV27='1';
+      let headerRow = table.querySelector('thead tr');
+      if(!headerRow){
+        const first=table.querySelector('tr');
+        if(first && first.querySelector('th') && !first.querySelector('td')) headerRow=first;
+      }
+      const headers=headerRow ? Array.from(headerRow.cells).map(cell=>cell.innerText.trim().replace(/\s+/g,' ')) : [];
+      if(headerRow && !headerRow.closest('thead')) headerRow.classList.add('mobile-table-header-row-v27');
+      table.querySelectorAll('tr').forEach(row=>{
+        if(row===headerRow){ row.classList.add('mobile-table-header-row-v27'); return; }
+        Array.from(row.cells).forEach((cell,index)=>{
+          if(cell.hasAttribute('colspan') && Number(cell.getAttribute('colspan'))>1) return;
+          const label=headers[index];
+          if(label && label.length && !cell.hasAttribute('data-mobile-label')) cell.setAttribute('data-mobile-label',label);
+        });
+      });
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',prepareMobileTables,{once:true});
+  else prepareMobileTables();
+  window.addEventListener('resize',prepareMobileTables,{passive:true});
+})();
+</script>
+
 </body>
 </html>
