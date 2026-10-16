@@ -336,10 +336,10 @@ nav#nv{background:var(--cd);color:var(--tx);border-right-color:var(--bd)}
 
 /* Всплывающие подсказки к обозначениям во всей методичке */
 .param-tip{cursor:help;text-decoration:underline;text-decoration-style:dotted;text-decoration-color:rgba(31,56,100,.55);text-underline-offset:3px}
-#param-tooltip{position:fixed;z-index:99999;max-width:min(340px,82vw);padding:9px 12px;border:1px solid #d7dee8;border-radius:8px;background:#fff;color:#202733;font:500 13px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;box-shadow:0 6px 22px rgba(0,0,0,.24);pointer-events:none;opacity:0;visibility:hidden;transform:translateY(3px);transition:opacity .1s ease,transform .1s ease}
+#param-tooltip{position:fixed;z-index:99999;max-width:min(340px,82vw);padding:10px 13px;border:1px solid #d7dee8;border-radius:9px;background:#fff;color:#202733;font:500 13px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.20),0 0 0 1px rgba(90,130,180,.05);pointer-events:none;opacity:0;visibility:hidden;transform:translateY(7px) scale(.985);transform-origin:top left;transition:opacity .24s cubic-bezier(.2,.7,.2,1),transform .28s cubic-bezier(.2,.7,.2,1),visibility 0s linear .28s}
 :root[data-theme="dark"] #param-tooltip{background:#1b2129;color:#e7ebef;border-color:#3a4655}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) #param-tooltip{background:#1b2129;color:#e7ebef;border-color:#3a4655}}
-#param-tooltip.visible{opacity:1;visibility:visible;transform:translateY(0)}
+#param-tooltip.visible{opacity:1;visibility:visible;transform:translateY(0) scale(1);transition:opacity .24s cubic-bezier(.2,.7,.2,1),transform .28s cubic-bezier(.2,.7,.2,1),visibility 0s}
 
 
 
@@ -444,6 +444,148 @@ header .toolbar,header #search-status{position:relative;z-index:1}
  #reading-progress span{transition:none!important}
 }
 @media print{#reading-progress,#nav-title::before,#nav-title::after,#nv button.on::before,#m h3.h1::after,#m .c::after{display:none!important}}
+
+
+
+/* MINIMAL WOW LAYER — interactive engineering atmosphere, no external dependencies */
+:root{
+ --wow-grid:rgba(65,139,202,.075);
+ --wow-spot:rgba(64,157,232,.105);
+ --wow-line:rgba(70,157,242,.20);
+ --wow-card-shadow:rgba(18,49,82,.10);
+ --wow-ripple:rgba(74,180,255,.34);
+ --wow-pointer-x:50vw;--wow-pointer-y:30vh;
+}
+:root[data-theme="dark"]{
+ --wow-grid:rgba(94,170,232,.09);
+ --wow-spot:rgba(69,157,242,.13);
+ --wow-line:rgba(90,190,255,.25);
+ --wow-card-shadow:rgba(0,0,0,.22);
+ --wow-ripple:rgba(91,199,255,.36);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --wow-grid:rgba(94,170,232,.09);--wow-spot:rgba(69,157,242,.13);
+ --wow-line:rgba(90,190,255,.25);--wow-card-shadow:rgba(0,0,0,.22);
+ --wow-ripple:rgba(91,199,255,.36)
+}}
+body::before,body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0}
+body::before{
+ background-image:linear-gradient(var(--wow-grid) 1px,transparent 1px),linear-gradient(90deg,var(--wow-grid) 1px,transparent 1px);
+ background-size:36px 36px;
+ -webkit-mask-image:radial-gradient(ellipse at 50% 20%,#000 0%,transparent 78%);
+ mask-image:radial-gradient(ellipse at 50% 20%,#000 0%,transparent 78%);
+ opacity:.8
+}
+body::after{
+ background:radial-gradient(440px circle at var(--wow-pointer-x) var(--wow-pointer-y),var(--wow-spot),transparent 72%);
+ opacity:.9;transition:opacity .25s ease
+}
+header{z-index:5;backdrop-filter:saturate(1.18)}
+main#m{position:relative;z-index:1}
+nav#nv{z-index:6}
+/* Thin, precise edge accents instead of heavy decoration */
+#m .c{position:relative;box-shadow:0 3px 12px var(--wow-card-shadow);transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease}
+@media(hover:hover) and (pointer:fine){
+ #m .c:hover{transform:translateY(-2px);border-color:var(--wow-line);box-shadow:0 8px 24px var(--wow-card-shadow),0 0 0 1px var(--wow-line)}
+ #nv button:not(.on):hover{border-color:var(--wow-line)}
+}
+#m h3.h1{position:relative}
+#m h3.h1::before{content:"";position:absolute;left:0;top:-7px;width:22px;height:2px;background:var(--tech-cyan);opacity:.7;box-shadow:0 0 12px var(--tech-glow)}
+#nv button.on::before{filter:drop-shadow(0 0 5px #59c7ff77) drop-shadow(0 0 12px #59c7ff33);}
+#th button,#print,#q{transition:box-shadow .2s ease,border-color .2s ease,background-color .2s ease}
+#th button.on{box-shadow:inset 0 -2px 0 var(--tech-cyan)}
+#q:focus{box-shadow:0 0 0 2px #59c7ff55,0 0 22px #59c7ff20}
+/* A short cinematic entrance for the first screen of each chapter */
+@keyframes chapterIn{from{opacity:0;transform:translateY(9px);filter:blur(2px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+#m section.on>:nth-child(-n+10){animation:chapterIn .46s cubic-bezier(.2,.7,.2,1) both}
+#m section.on>:nth-child(1){animation-delay:.015s}
+#m section.on>:nth-child(2){animation-delay:.035s}
+#m section.on>:nth-child(3){animation-delay:.055s}
+#m section.on>:nth-child(4){animation-delay:.075s}
+#m section.on>:nth-child(5){animation-delay:.095s}
+#m section.on>:nth-child(6){animation-delay:.115s}
+#m section.on>:nth-child(7){animation-delay:.135s}
+#m section.on>:nth-child(8){animation-delay:.155s}
+#m section.on>:nth-child(9){animation-delay:.175s}
+#m section.on>:nth-child(10){animation-delay:.195s}
+/* Click pulse: brief and quiet, without changing control behavior */
+.wow-click-pulse{position:fixed;z-index:10000;width:12px;height:12px;border:1px solid var(--wow-ripple);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%) scale(.25);animation:wowPulse .68s cubic-bezier(.15,.65,.25,1) forwards}
+@keyframes wowPulse{0%{opacity:.85;transform:translate(-50%,-50%) scale(.25);box-shadow:0 0 0 0 var(--wow-ripple)}100%{opacity:0;transform:translate(-50%,-50%) scale(8);box-shadow:0 0 0 1px transparent}}
+@media(prefers-reduced-motion:reduce){
+ body::after{display:none!important}
+ #m section.on>:nth-child(-n+10){animation:none!important}
+ #m .c{transition:none!important}
+ .wow-click-pulse{display:none!important}
+}
+@media print{body::before,body::after,.wow-click-pulse{display:none!important}#m section.on>:nth-child(-n+10){animation:none!important}#m .c{box-shadow:none!important}}
+
+
+
+
+/* MOBILE REFINEMENT v24 — compact layout, viewport-safe tables, stable nav gear */
+@media (max-width: 899px) {
+  /* The branding strip wastes scarce vertical space on the bottom navigation. */
+  nav#nv #nav-title { display: none !important; }
+
+  /* Keep search and theme selector on a single compact row. */
+  header { padding: 6px 5px !important; }
+  .toolbar { display:flex !important; flex-wrap:nowrap !important; align-items:center !important; gap:5px !important; width:100%; }
+  #q { order:0 !important; flex:1 1 0 !important; width:1px !important; min-width:0 !important; padding:7px 7px !important; font-size:12px !important; }
+  #th { order:1 !important; display:flex; flex:0 0 auto !important; gap:2px; max-width:none !important; }
+  #th button, #th button:nth-child(2), #th button:nth-child(3) {
+    width:auto !important; min-width:0 !important; padding:7px 5px !important; font-size:10px !important; line-height:1.1 !important; white-space:nowrap;
+  }
+  #print { display:none !important; }
+
+  /* Recover almost all screen width for manual text and tables. */
+  main#m { width:100% !important; margin:0 !important; padding:7px 5px calc(116px + env(safe-area-inset-bottom,0px)) !important; box-sizing:border-box !important; }
+  #m section { min-width:0; }
+  #m .c, #m .n, #m .i, #m .cv { width:100% !important; max-width:100% !important; margin-left:0 !important; margin-right:0 !important; box-sizing:border-box; }
+  #m p, #m li, #m .n, #m .i { text-align:justify !important; text-justify:inter-word; }
+  #m p { margin:7px 0 9px !important; }
+  #m li { margin:4px 0 !important; line-height:1.35 !important; }
+  #m ul, #m ol { padding-left:15px !important; margin:7px 0 10px !important; }
+  #m h3, #m h3.h1 { margin-top:12px !important; margin-bottom:8px !important; padding-bottom:5px !important; }
+  #m .c { margin-top:8px !important; margin-bottom:10px !important; }
+  #m .n, #m .i { margin-top:8px !important; margin-bottom:8px !important; padding:7px !important; }
+
+  /* One consistent compact text size, including headings and table cells. */
+  #m, #m p, #m li, #m table, #m caption, #m th, #m td, #m h1, #m h2, #m h3, #m h4,
+  #m strong, #m em, #m span, #m div, #m label, #m figcaption, #m .n, #m .i, #m .c {
+    font-size:12px !important;
+  }
+  #m { line-height:1.35 !important; }
+  /* Keep every table inside the viewport: fixed columns + wrapping prevent right-edge clipping. */
+  #m .c { overflow:visible !important; min-width:0 !important; }
+  #m table { display:table !important; width:100% !important; min-width:0 !important; max-width:100% !important; margin:7px 0 10px !important; border-collapse:collapse !important; table-layout:fixed !important; }
+  #m thead, #m tbody, #m tr { max-width:100% !important; }
+  #m th, #m td { box-sizing:border-box !important; min-width:0 !important; max-width:100% !important; padding:4px 3px !important; line-height:1.25 !important; white-space:normal !important; overflow-wrap:anywhere !important; word-break:break-word !important; }
+  #m th img, #m td img { max-width:100% !important; height:auto !important; }
+  #m table * { max-width:100%; }
+  #m .fraction { font-size:12px !important; }
+
+  /* Images use the entire available screen width, not a narrow centered column. */
+  #m figure, #m figure.photo1, #m figure.photo-other {
+    width:100% !important; max-width:none !important; margin:8px 0 10px !important; padding:0 !important; box-sizing:border-box !important;
+  }
+  #m figure img, #m figure.photo1 img, #m figure.photo-other img {
+    display:block !important; width:100% !important; max-width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; margin:0 !important;
+  }
+
+  /* Center the rotating gear's own box and rotation pivot to prevent visual wobble. */
+  #nv button.on { padding-right:7px !important; }
+  #nv button.on::before {
+    right:4px !important; top:50% !important; left:auto !important;
+    width:16px !important; height:16px !important;
+    transform:translateY(-50%) rotate(var(--gear-angle,0deg)) !important;
+    transform-origin:50% 50% !important; background-position:50% 50% !important;
+  }
+}
+@media (max-width:380px) {
+  #q { padding-left:5px !important; padding-right:5px !important; }
+  #th button, #th button:nth-child(2), #th button:nth-child(3) { padding-left:4px !important; padding-right:4px !important; font-size:9px !important; }
+  #m th, #m td { padding:3px 2px !important; }
+}
 
 </style>
 </head>
@@ -767,18 +909,21 @@ function installParamTips(){
   node.parentNode.replaceChild(frag,node);
  });
  const tip=document.createElement('div');tip.id='param-tooltip';tip.setAttribute('role','tooltip');document.body.appendChild(tip);
- let current=null;
- function show(el){if(!el||!PARAM_TIPS[el.dataset.param])return;current=el;tip.textContent=PARAM_TIPS[el.dataset.param];tip.classList.add('visible');
+ let current=null,showTimer=null;
+ function show(el){if(!el||!PARAM_TIPS[el.dataset.param])return;clearTimeout(showTimer);current=el;tip.textContent=PARAM_TIPS[el.dataset.param];
   const r=el.getBoundingClientRect();const w=Math.min(340,window.innerWidth*.82);tip.style.maxWidth=w+'px';
-  // Position below the word where possible, otherwise above it; keep tooltip inside viewport.
-  tip.style.left='0px';tip.style.top='0px';const tr=tip.getBoundingClientRect();let left=Math.max(8,Math.min(r.left,window.innerWidth-tr.width-8));let top=r.bottom+8;
+  // Measure and place first, then reveal with a soft fade/slide.
+  tip.classList.remove('visible');tip.style.left='0px';tip.style.top='0px';
+  const tr=tip.getBoundingClientRect();let left=Math.max(8,Math.min(r.left,window.innerWidth-tr.width-8));let top=r.bottom+8;
   if(top+tr.height>window.innerHeight-8)top=Math.max(8,r.top-tr.height-8);
   tip.style.left=left+'px';tip.style.top=top+'px';
+  requestAnimationFrame(()=>{if(current===el)tip.classList.add('visible')});
  }
- function hide(){current=null;tip.classList.remove('visible')}
- document.getElementById('m').addEventListener('mouseover',e=>{const el=e.target.closest('.param-tip');if(el)show(el);else if(current&&!tip.contains(e.relatedTarget))hide()});
+ function queueShow(el,delay=170){clearTimeout(showTimer);if(!el||!PARAM_TIPS[el.dataset.param])return;showTimer=setTimeout(()=>show(el),delay)}
+ function hide(){clearTimeout(showTimer);showTimer=null;current=null;tip.classList.remove('visible')}
+ document.getElementById('m').addEventListener('mouseover',e=>{const el=e.target.closest('.param-tip');if(el)queueShow(el);else if(current&&!tip.contains(e.relatedTarget))hide()});
  document.getElementById('m').addEventListener('mouseout',e=>{const el=e.target.closest('.param-tip');if(el&&!el.contains(e.relatedTarget))hide()});
- document.getElementById('m').addEventListener('focusin',e=>{const el=e.target.closest('.param-tip');if(el)show(el)});
+ document.getElementById('m').addEventListener('focusin',e=>{const el=e.target.closest('.param-tip');if(el)queueShow(el,90)});
  document.getElementById('m').addEventListener('focusout',e=>{if(e.target.closest('.param-tip'))hide()});
  window.addEventListener('scroll',hide,true);window.addEventListener('resize',hide);
 }
@@ -920,5 +1065,41 @@ Q.oninput=e=>{const v=e.target.value;if(!v&&was){was=false;find("");go(0);return
 })();
 
 </script>
+
+<script>
+/* Pointer-reactive light and click pulse; existing search, theme, print and gear code remain intact. */
+(()=>{
+ const root=document.documentElement;
+ const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ let pointerQueued=false,lastX=-1,lastY=-1;
+ function setPointer(x,y){
+  lastX=x;lastY=y;
+  if(pointerQueued)return;
+  pointerQueued=true;
+  requestAnimationFrame(()=>{
+   pointerQueued=false;
+   root.style.setProperty('--wow-pointer-x',lastX+'px');
+   root.style.setProperty('--wow-pointer-y',lastY+'px');
+  });
+ }
+ if(!reduce && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+  window.addEventListener('pointermove',e=>setPointer(e.clientX,e.clientY),{passive:true});
+  window.addEventListener('pointerleave',()=>{
+   root.style.setProperty('--wow-pointer-x','50vw');
+   root.style.setProperty('--wow-pointer-y','25vh');
+  },{passive:true});
+  document.addEventListener('click',e=>{
+   if(e.button!==0)return;
+   const pulse=document.createElement('span');pulse.className='wow-click-pulse';
+   pulse.style.left=e.clientX+'px';pulse.style.top=e.clientY+'px';
+   document.body.appendChild(pulse);
+   pulse.addEventListener('animationend',()=>pulse.remove(),{once:true});
+   setTimeout(()=>pulse.remove(),850);
+  },{passive:true});
+ }
+})();
+</script>
+
+
 </body>
 </html>
