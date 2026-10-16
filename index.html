@@ -1263,5 +1263,70 @@ Q.oninput=e=>{const v=e.target.value;if(!v&&was){was=false;find("");go(0);return
 })();
 </script>
 
+
+<style id="mobile-table-cards-v29">
+@media (max-width: 700px) {
+  #m .c { width:100% !important; max-width:100% !important; min-width:0 !important; overflow:visible !important; box-sizing:border-box !important; }
+  #m table.mobile-cards-source { display:none !important; }
+  #m .mobile-table-cards { display:grid !important; grid-template-columns:minmax(0,1fr) !important; gap:10px !important; width:100% !important; max-width:100% !important; min-width:0 !important; box-sizing:border-box !important; }
+  #m .mobile-table-card { display:block !important; width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; padding:10px 12px !important; margin:0 !important; border:1px solid var(--bd,#d1d5db) !important; border-radius:10px !important; background:var(--cd,#fff) !important; overflow:hidden !important; }
+  #m .mobile-table-field { display:block !important; min-width:0 !important; max-width:100% !important; padding:7px 0 !important; border-bottom:1px solid var(--bd,#d1d5db) !important; box-sizing:border-box !important; }
+  #m .mobile-table-field:last-child { border-bottom:0 !important; padding-bottom:0 !important; }
+  #m .mobile-table-label { display:block !important; margin:0 0 3px !important; color:var(--mu,#64748b) !important; font-size:11px !important; font-weight:700 !important; line-height:1.35 !important; overflow-wrap:anywhere !important; word-break:break-word !important; }
+  #m .mobile-table-value { display:block !important; min-width:0 !important; max-width:100% !important; color:var(--tx,#1f2937) !important; font-size:14px !important; line-height:1.5 !important; white-space:normal !important; overflow-wrap:anywhere !important; word-break:break-word !important; hyphens:auto !important; }
+  #m .mobile-table-value * { max-width:100% !important; white-space:normal !important; overflow-wrap:anywhere !important; word-break:break-word !important; }
+  #m .mobile-table-card:first-child { margin-top:0 !important; }
+}
+@media (min-width:701px) { #m .mobile-table-cards { display:none !important; } }
+</style>
+<script id="mobile-table-cards-v29">
+(()=>{
+ const isMobile=()=>window.matchMedia('(max-width:700px)').matches;
+ function process(root=document){
+  const tables=[];
+  if(root instanceof Element && root.matches('table')) tables.push(root);
+  if(root.querySelectorAll) tables.push(...root.querySelectorAll('table'));
+  for(const table of tables){
+   const wrap=table.closest('.c')||table.parentElement;
+   if(!wrap) continue;
+   if(!isMobile()){
+    const existing=wrap.querySelector(':scope > .mobile-table-cards');
+    if(existing) existing.remove();
+    table.classList.remove('mobile-cards-source');
+    delete table.dataset.mobileCardsV29;
+    continue;
+   }
+   if(table.dataset.mobileCardsV29==='1') continue;
+   const headRow=table.querySelector('thead tr');
+   const headers=headRow?Array.from(headRow.cells).map(c=>c.textContent.trim().replace(/\s+/g,' ')):[];
+   const cardList=document.createElement('div');
+   cardList.className='mobile-table-cards';
+   for(const row of Array.from(table.querySelectorAll('tbody tr'))){
+    const cells=Array.from(row.cells);
+    if(!cells.length) continue;
+    const card=document.createElement('div'); card.className='mobile-table-card';
+    cells.forEach((cell,i)=>{
+     const label=(cell.getAttribute('data-l')||headers[i]||('Поле '+(i+1))).trim();
+     const field=document.createElement('div'); field.className='mobile-table-field';
+     const lab=document.createElement('span'); lab.className='mobile-table-label'; lab.textContent=label;
+     const val=document.createElement('div'); val.className='mobile-table-value'; val.innerHTML=cell.innerHTML;
+     field.append(lab,val); card.appendChild(field);
+    });
+    cardList.appendChild(card);
+   }
+   table.classList.add('mobile-cards-source');
+   table.dataset.mobileCardsV29='1';
+   table.insertAdjacentElement('afterend',cardList);
+  }
+ }
+ let queued=false;
+ function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;process(document);});}
+ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',schedule,{once:true}); else schedule();
+ window.addEventListener('resize',schedule,{passive:true});
+ const observer=new MutationObserver(records=>{if(!isMobile())return;for(const r of records){for(const n of r.addedNodes){if(n.nodeType===1)process(n);}}});
+ observer.observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
 </body>
 </html>
