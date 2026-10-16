@@ -621,6 +621,29 @@ nav#nv{z-index:6}
 @media (max-width:380px) {
   #m th, #m td { padding:4px 3px !important; font-size:13px !important; }
 }
+
+
+/* MOBILE TABLE FIX v26 — force wrapping of unspaced technical strings without changing table structure */
+@media (max-width: 899px) {
+  #m .c { width:100% !important; max-width:100% !important; min-width:0 !important; overflow-x:clip !important; box-sizing:border-box !important; }
+  #m .c table { display:table !important; width:100% !important; min-width:0 !important; max-width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; }
+  #m .c thead, #m .c tbody { width:100% !important; max-width:100% !important; }
+  #m .c tr { display:table-row !important; width:100% !important; max-width:100% !important; }
+  #m .c th, #m .c td,
+  #m .c th *, #m .c td * {
+    min-width:0 !important;
+    max-width:100% !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    word-break:break-word !important;
+    hyphens:auto !important;
+    text-overflow:clip !important;
+  }
+  #m .c th, #m .c td { box-sizing:border-box !important; vertical-align:top !important; }
+  /* Technical identifiers may contain no spaces; allow wrapping without inserting spaces or extra columns. */
+  #m .c td, #m .c th { overflow:visible !important; }
+  #m .c img { max-width:100% !important; height:auto !important; }
+}
 </style>
 </head>
 <body>
