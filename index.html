@@ -587,6 +587,40 @@ nav#nv{z-index:6}
   #m th, #m td { padding:3px 2px !important; }
 }
 
+
+
+/* MOBILE TABLE READABILITY v25 — preserve original cells/columns and improve spacing */
+@media (max-width: 899px) {
+  /* Double the horizontal inset for body text and paragraphs. */
+  main#m { padding-left:10px !important; padding-right:10px !important; }
+  #m p, #m li, #m .n, #m .i { padding-left:0 !important; padding-right:0 !important; }
+  #m .n, #m .i { padding:9px !important; }
+
+  /* One original table cell remains one cell; content wraps inside it. */
+  #m table { table-layout:fixed !important; width:100% !important; max-width:100% !important; }
+  #m tr { display:table-row !important; }
+  #m th, #m td {
+    display:table-cell !important;
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    overflow-wrap:break-word !important;
+    word-break:normal !important;
+    hyphens:auto;
+    vertical-align:top !important;
+    padding:5px 4px !important;
+    line-height:1.35 !important;
+    font-size:13px !important;
+  }
+  /* Slightly larger, consistent type for comfortable phone reading. */
+  #m, #m p, #m li, #m table, #m caption, #m h1, #m h2, #m h3, #m h4,
+  #m strong, #m em, #m span, #m div, #m label, #m figcaption, #m .n, #m .i, #m .c {
+    font-size:13px !important;
+  }
+}
+@media (max-width:380px) {
+  #m th, #m td { padding:4px 3px !important; font-size:13px !important; }
+}
 </style>
 </head>
 <body>
