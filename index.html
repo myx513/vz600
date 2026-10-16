@@ -1162,6 +1162,8 @@ Q.oninput=e=>{const v=e.target.value;if(!v&&was){was=false;find("");go(0);return
 <style id="mobile-table-reflow-v27">
 /* Mobile: turn each table row into a readable vertical record; never add/reorder data columns. */
 @media (max-width: 680px) {
+  /* The source wraps tables in .c, which was an overflow-x:auto container. */
+  .c { width: 100% !important; max-width: 100% !important; min-width: 0 !important; overflow: visible !important; box-sizing: border-box !important; }
   .content table, main table, article table, section table, table {
     display: block !important;
     width: 100% !important;
@@ -1200,8 +1202,8 @@ Q.oninput=e=>{const v=e.target.value;if(!v&&was){was=false;find("");go(0);return
     white-space: normal !important;
     overflow: visible !important;
     text-overflow: clip !important;
-    overflow-wrap: break-word !important;
-    word-break: normal !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
     hyphens: auto;
     line-height: 1.45 !important;
     font-size: 13px !important;
@@ -1221,33 +1223,43 @@ Q.oninput=e=>{const v=e.target.value;if(!v&&was){was=false;find("");go(0);return
   table tr:empty { display: none !important; }
 }
 </style>
-<script id="mobile-table-labels-v27">
+<script id="mobile-table-labels-v28">
 (()=>{
-  function prepareMobileTables(){
-    if(!window.matchMedia('(max-width: 680px)').matches) return;
-    document.querySelectorAll('table').forEach(table=>{
-      if(table.dataset.mobileReflowV27==='1') return;
-      table.dataset.mobileReflowV27='1';
-      let headerRow = table.querySelector('thead tr');
-      if(!headerRow){
-        const first=table.querySelector('tr');
-        if(first && first.querySelector('th') && !first.querySelector('td')) headerRow=first;
-      }
-      const headers=headerRow ? Array.from(headerRow.cells).map(cell=>cell.innerText.trim().replace(/\s+/g,' ')) : [];
-      if(headerRow && !headerRow.closest('thead')) headerRow.classList.add('mobile-table-header-row-v27');
+  const mobile = () => window.matchMedia('(max-width: 680px)').matches;
+  function prepareMobileTables(root=document){
+    if(!mobile()) return;
+    const tables = [];
+    if(root instanceof Element && root.matches('table')) tables.push(root);
+    if(root.querySelectorAll) tables.push(...root.querySelectorAll('table'));
+    tables.forEach(table=>{
+      // Generated tables are inserted dynamically after the page's initial load.
+      // Process each table when it actually appears, not just at DOMContentLoaded.
+      table.querySelectorAll('thead').forEach(el=>{ el.style.setProperty('display','none','important'); });
+      const headerRow = table.querySelector('thead tr');
+      const headers = headerRow ? Array.from(headerRow.cells).map(cell=>cell.innerText.trim().replace(/\s+/g,' ')) : [];
       table.querySelectorAll('tr').forEach(row=>{
-        if(row===headerRow){ row.classList.add('mobile-table-header-row-v27'); return; }
+        if(headerRow && row===headerRow) return;
         Array.from(row.cells).forEach((cell,index)=>{
-          if(cell.hasAttribute('colspan') && Number(cell.getAttribute('colspan'))>1) return;
-          const label=headers[index];
-          if(label && label.length && !cell.hasAttribute('data-mobile-label')) cell.setAttribute('data-mobile-label',label);
+          // These tables already carry the exact column name in data-l.
+          const label = (cell.getAttribute('data-l') || headers[index] || '').trim();
+          if(label && !cell.hasAttribute('data-mobile-label')) cell.setAttribute('data-mobile-label',label);
         });
       });
+      table.dataset.mobileReflowV28='1';
     });
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',prepareMobileTables,{once:true});
-  else prepareMobileTables();
-  window.addEventListener('resize',prepareMobileTables,{passive:true});
+  function refresh(){ if(mobile()) prepareMobileTables(document); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',refresh,{once:true});
+  else refresh();
+  window.addEventListener('resize',refresh,{passive:true});
+  // The manual renders sections/tables from JavaScript on navigation; observe those insertions.
+  const observer = new MutationObserver(records=>{
+    if(!mobile()) return;
+    records.forEach(record=>record.addedNodes.forEach(node=>{
+      if(node.nodeType===1) prepareMobileTables(node);
+    }));
+  });
+  observer.observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
 
